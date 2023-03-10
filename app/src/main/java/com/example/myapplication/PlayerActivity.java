@@ -26,7 +26,6 @@ public class PlayerActivity extends AppCompatActivity {
     Button btnplay,btnnext,btnprev,btnff,btnfr;
     TextView txtsname,txtsstart,txtstop;
     SeekBar songbar;
-    BarVisualizer visualizer;
     String sname;
     ImageView imageView;
     Thread updateseekbar;
@@ -47,7 +46,6 @@ public class PlayerActivity extends AppCompatActivity {
         txtsstart=findViewById(R.id.txtstart);
         txtstop=findViewById(R.id.txtstop);
         songbar=findViewById(R.id.seekbar);
-        visualizer=findViewById(R.id.blast);
         imageView=findViewById(R.id.songimage);
         if(mediaPlayer!=null)
         {
@@ -66,7 +64,7 @@ public class PlayerActivity extends AppCompatActivity {
         mediaPlayer.start();
        updateseekbar=new Thread(){
            @Override
-           public void run(){
+           public void run(){                                                                           //function to update seekbar
                int totalduration=mediaPlayer.getDuration();
                int currentposition=0;
                while(currentposition<totalduration){
@@ -83,7 +81,7 @@ public class PlayerActivity extends AppCompatActivity {
        };
        songbar.setMax(mediaPlayer.getDuration());
        updateseekbar.start();
-       songbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+       songbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {                             //when user customizes seek bar
            @Override
            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
@@ -113,7 +111,7 @@ public class PlayerActivity extends AppCompatActivity {
        },delay);
 
         btnplay.setOnClickListener(new View.OnClickListener() {
-            @Override
+            @Override                                                                                   //handle changing of icon while playing and pausing
             public void onClick(View view) {
                 if(mediaPlayer.isPlaying())
                 {
@@ -128,7 +126,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
-        btnff.setOnClickListener(new View.OnClickListener() {
+        btnff.setOnClickListener(new View.OnClickListener() {                                            //function for fastforward button
             @Override
             public void onClick(View view) {
                 if(mediaPlayer.isPlaying()){
@@ -136,7 +134,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
-        btnfr.setOnClickListener(new View.OnClickListener() {
+        btnfr.setOnClickListener(new View.OnClickListener() {                                            //function for rewind button
             @Override
             public void onClick(View view) {
                 if(mediaPlayer.isPlaying()){
@@ -144,7 +142,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
-        btnnext.setOnClickListener(new View.OnClickListener() {
+        btnnext.setOnClickListener(new View.OnClickListener() {                                            //function for next button
             @Override
             public void onClick(View view) {
                 mediaPlayer.stop();
@@ -158,12 +156,12 @@ public class PlayerActivity extends AppCompatActivity {
                 animate(imageView);
             }
         });
-        btnprev.setOnClickListener(new View.OnClickListener() {
+        btnprev.setOnClickListener(new View.OnClickListener() {                                              //function for previous button
             @Override
             public void onClick(View view) {
                 mediaPlayer.stop();
                 mediaPlayer.release();
-                position=((position-1)<0)?(mysongs.size()-1):(position-1);
+                position=((position-1)<0)?(mysongs.size()-1):(position-1);                                    //in case of first song
                 Uri u= Uri.parse(mysongs.get(position).toString());
                 mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
                 sname=mysongs.get(position).getName();
@@ -172,21 +170,20 @@ public class PlayerActivity extends AppCompatActivity {
                 animate(imageView);
             }
         });
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {                   //function when music is finished
             @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                btnnext.performClick();
+            public void onCompletion(MediaPlayer mediaPlayer) {btnnext.performClick();
             }
         });
     }
-    public void animate(View view){
+    public void animate(View view){                                                                              //function to rotate image while changing song
         ObjectAnimator animator= ObjectAnimator.ofFloat(imageView,"rotation",0f,360f);
         animator.setDuration(1000);
         AnimatorSet animatorSet=new AnimatorSet();
         animatorSet.playTogether(animator);
         animatorSet.start();
     }
-    public String createtime(int duration){
+    public String createtime(int duration){                              //function to convert milisecond to min:sec
         String time="";
         int min=duration/1000/60;
         int sec=duration/1000%60;
